@@ -1,0 +1,30 @@
+# Python 缓存与虚拟环境
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# 编辑器 / 操作系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地打分产物（导出 / 临时文件）
+scores.csv
+*.predictions
+peptide.dataset
+peptideranker_scores*.csv
+
+# 前端自测产物（截图 + report.json，可随时用 smoke.mjs 重新生成）
+app/static/_mock/_artifacts/
+
+# 注意：以下内容必须提交，不要加入忽略列表
+#   Models_Short/  Models_Long/  Models_Short.txt  Models_Long.txt
+#   PeptideRanker  PeptideRanker.pl  testfile.txt
+#   _re/（逆向分析与参考分数，是数值校验的证据）

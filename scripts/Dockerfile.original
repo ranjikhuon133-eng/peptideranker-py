@@ -1,0 +1,17 @@
+# 用原始 PeptideRanker 二进制生成标准答案用的最小 Linux 环境。
+#
+# 构建： docker build -f scripts/Dockerfile.original -t peptideranker-original .
+# 运行： docker run --rm -v "%cd%:/w" -w /w peptideranker-original \
+#            bash scripts/run_original.sh testfile.txt > _re/golden_original.txt
+#
+# 说明：原二进制是 2010 年的 ELF64，仅依赖 libc / libstdc++ / libm，
+#       所以用 Debian 基础镜像 + perl + gawk 就够了，无需编译。
+
+FROM debian:bookworm-slim
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends perl gawk ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /w
+CMD ["bash", "scripts/run_original.sh", "testfile.txt"]

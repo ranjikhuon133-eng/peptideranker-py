@@ -1,0 +1,60 @@
+# Boundary probe set for the short/long model switch-over (20 aa).
+# Question: does the predictor use SHORT for length<=20 (as PeptideRanker.pl does:
+#   if ($length <= 20) Models_Short else Models_Long) or SHORT for length<20
+#   (as the paper text claims: 'short predictor for peptides of less than 20 amino acids,
+#   and the long peptide predictor for peptides of 20 or more residues')?
+# A published score for ANY peptide of length exactly 20 is decisive: run BOTH models and
+# whichever reproduces the published value identifies the true rule.
+# NOTE: no sequence of length exactly 20 from testfile.txt (FLSLALAALPKLFCLIFKKC) was
+# found in any indexed literature - see reference_scores.md section 'unfound'.
+# Columns: <sequence>\t<length>\t<published score>\t<source-url>
+ACEIDPPIVIDPPIIII	17	0.741592	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12195943/fullTextXML
+DEKSGGAMAVPGPMGPM	17	0.737778	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+DPPIVIDPPIIIIACEI	17	0.99343	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12195943/fullTextXML
+EGNFDLVGNNFPVFFIR	17	0.826634	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+EGNWDLLGNNFPVFFIR	17	0.902904	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+FTGPPGEPGEAGAPGPM	17	0.714592	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+NRPQFLVGKSSLLHSMR	17	0.823569	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+SSAGGFLGDLIKWNFEK	17	0.851297	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+ACSLLPPMLYSSPLALSR	18	0.826857	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+AGDDAPRAVFPSIVGRPR	18	0.6843	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10217141/fullTextXML
+DILKEDMPSQRYLEELHR	18	0.125535	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13486097/fullTextXML
+FDGPEGPRGPPGSEGRQG	18	0.684086	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12861254/fullTextXML
+GFTGPPGEPGEAGAPGPM	18	0.733862	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPAGPNGPPGKDGSNGMP	18	0.897006	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPPGKDGQPGHPGPIGPA	18	0.8358	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10217141/fullTextXML
+GPSGTPGPDGNKGEPGAV	18	0.652482	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+QGMPGPSGPSGDSGAAGI	18	0.745869	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+AGPAGERGEQGPAGPPGFQ	19	0.686226	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPAGPNGPPGKDGSNGMPG	19	0.920454	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPSGPSGERGPPGPMGPPG	19	0.902002	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPSGTPGPDGNKGEPGAVG	19	0.670225	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+IAGPAGPRGPAGPNGPPGK	19	0.893578	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+PGKEGPAGPAGQDGRSGPP	19	0.690662	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+PGPSGPSGDSGAAGIAGPA	19	0.817344	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+PSGFQLFGSPAGQKDLLFK	19	0.797903	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13486097/fullTextXML
+TGPPGEPGEAGAPGPMGPR	19	0.819886	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+FTGPPGEPGEAGAPGPMGPR	20	0.806036	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GDKAQGVKTDMESWWKKYVF	20	0.737327	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11990805/fullTextXML
+GDKASGVKVDMESWWNTYIF	20	0.750464	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11990805/fullTextXML
+GFAGDDAPRAVFPSIVGRPR	20	0.6456	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10217141/fullTextXML
+GPAGPNGPPGKDGSNGMPGA	20	0.911339	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPAGSSGPAGKDGMSGLPGP	20	0.873632	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPPGAPGPPGPPGPSGGGFD	20	0.936409	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GVSFPFPVSSSSAAPPVCCR	20	0.882809	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+HVGKTPIVGQPSIPGGPVRL	20	0.524718	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12689192/fullTextXML
+QGPSGPSGERGPPGPMGPPG	20	0.892594	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+TGPPGEPGEAGAPGPMGPRG	20	0.831545	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+EPTTSDVVVAGEFDQGSGSMR	21	0.172646	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10674851/fullTextXML
+FTGPPGEPGEAGAPGPMGPRG	21	0.713347	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GEPGKQGPSGPSGERGPPGPM	21	0.703984	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GFTGPPGEPGEAGAPGPMGPR	21	0.686305	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPRGPAGPNGPPGKDGSNGMP	21	0.678263	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPSGPSGPQGQRGEPGTNGAV	21	0.748436	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+LAGPPGEPGREGTPGNEGSAG	21	0.673855	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+GPRGPAGPNGPPGKDGSNGMPG	22	0.706289	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12681514/fullTextXML
+SSEVVGGVGGTCVIRGCVPKKI	22	0.988623	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+ACEIHDPPIVIDPPIIIIRIPLI	23	0.58977	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12195943/fullTextXML
+MGKMASTLLATIYLWSLVAINGK	23	0.977959	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+MKAMATSAATLLPFSLCLLLLCR	23	0.99011	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9100645/fullTextXML
+REGAQPGAQPGPEPAAEEQPQAP	23	0.737179	https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12689192/fullTextXML

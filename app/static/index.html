@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>PeptideRanker · 肽活性打分</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1428'/%3E%3Cpath d='M7 16h18' stroke='%236ee7ff' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='7' cy='16' r='3.5' fill='%237c5cff'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%236ee7ff'/%3E%3Ccircle cx='25' cy='16' r='3.5' fill='%2334d399'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== 内联 SVG 图标库（零外部依赖） ===== -->
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <symbol id="i-logo" viewBox="0 0 24 24">
+    <path d="M3 12h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="3.6" cy="12" r="2.4" fill="currentColor"/>
+    <circle cx="12" cy="12" r="2.4" fill="currentColor"/>
+    <circle cx="20.4" cy="12" r="2.4" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.6 12h16.8M12 3.6c2.5 2.6 2.5 14.2 0 16.8M12 3.6c-2.5 2.6-2.5 14.2 0 16.8" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.2v13.6c0 .8.9 1.3 1.5.9l10.4-6.8c.6-.4.6-1.4 0-1.8L9.5 4.3C8.9 3.9 8 4.4 8 5.2z" fill="currentColor"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 5.6A2.6 2.6 0 0 0 12.4 4H6.6A2.6 2.6 0 0 0 4 6.6v5.8A2.6 2.6 0 0 0 5.6 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3.5v11m0 0 4-4m-4 4-4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 16.5v1.9A2.1 2.1 0 0 0 6.6 20.5h10.8a2.1 2.1 0 0 0 2.1-2.1v-1.9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15M9.5 6.5V4.8c0-.7.6-1.3 1.3-1.3h2.4c.7 0 1.3.6 1.3 1.3v1.7M6.5 6.5l.9 12.2c.1 1 .9 1.8 1.9 1.8h5.4c1 0 1.8-.8 1.9-1.8l.9-12.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16.5V5.5m0 0-4 4m4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 15.5v3A2 2 0 0 0 6.5 20.5h11a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M20 3.5V9h-5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.8 2.9 19.2h18.2L12 3.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9.6v4.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="16.9" r="1.1" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.8 4.4 4.4L19 6.9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M13.5 3.5H7.4A2.4 2.4 0 0 0 5 5.9v12.2a2.4 2.4 0 0 0 2.4 2.4h9.2a2.4 2.4 0 0 0 2.4-2.4V9.4l-5.5-5.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.4 3.6v5.6h5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M4 20h16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M7.6 17v-5m4 5V8.2m4 8.8v-3.4m4 3.4V6" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3.5h6M10 3.5v5.2L5.3 17a2.6 2.6 0 0 0 2.2 4h9a2.6 2.6 0 0 0 2.2-4L14 8.7V3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.6 14.6h8.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.2 13.9 9l5.9 1.9-5.9 1.9L12 18.7 10.1 12.8 4.2 10.9 10.1 9 12 3.2z" fill="currentColor"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3.5v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6.6 6.9a7.5 7.5 0 1 0 10.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</svg>
+
+<!-- 顶部加载进度条 -->
+<div class="topline" id="progressBar" aria-hidden="true"><i></i></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand__mark"><svg class="icon icon--lg"><use href="#i-logo"></use></svg></span>
+    <div class="brand__text">
+      <h1>PeptideRanker <span data-i18n="app.brandTag">肽活性打分</span></h1>
+      <p data-i18n="app.brandSub">本地离线预测 · 短肽 / 长肽双模型 · 输出 0–1 活性概率</p>
+    </div>
+  </div>
+
+  <div class="topbar__right">
+    <div class="segmented segmented--lang" id="langSwitch" role="group"
+         aria-label="界面语言" data-i18n-aria-label="lang.groupAria">
+      <svg class="icon langswitch__icon" aria-hidden="true"><use href="#i-globe"></use></svg>
+      <button class="seg is-active" type="button" data-lang="zh"
+              title="切换到中文界面" data-i18n-title="lang.zhTitle">中文</button>
+      <button class="seg" type="button" data-lang="en"
+              title="Switch to English" data-i18n-title="lang.enTitle">EN</button>
+    </div>
+    <div class="status" id="statusBadge" data-state="unknown">
+      <span class="status__dot" aria-hidden="true"></span>
+      <span class="status__body">
+        <strong id="statusTitle">正在检测引擎…</strong>
+        <em id="statusMeta">GET /api/status</em>
+      </span>
+    </div>
+    <button class="btn btn--ghost btn--sm" id="recheckBtn" type="button"
+            title="重新请求 /api/status" data-i18n-title="status.retryTitle">
+      <svg class="icon"><use href="#i-refresh"></use></svg><span data-i18n="status.retry">重试连接</span>
+    </button>
+    <button class="btn btn--ghost btn--sm" id="quitBtn" type="button"
+            title="停止本机打分服务并释放端口（等于关闭启动时那个命令行窗口）" data-i18n-title="quit.buttonTitle">
+      <svg class="icon"><use href="#i-power"></use></svg><span data-i18n="quit.button">退出程序</span>
+    </button>
+  </div>
+</header>
+
+<!-- 退出确认弹层 -->
+<div class="modal" id="quitModal" hidden>
+  <div class="modal__mask" id="quitCancelMask"></div>
+  <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="quitTitle">
+    <svg class="icon icon--lg modal__icon"><use href="#i-power"></use></svg>
+    <h2 id="quitTitle" data-i18n="quit.title">确定要退出程序吗？</h2>
+    <p data-i18n-html="quit.bodyHtml">退出后会停止本机的打分服务并释放端口，网页将无法继续使用（可直接关闭本页）。下次要用时，重新双击文件夹里的 <b>启动网页.bat</b> 即可。</p>
+    <p class="modal__hint" data-i18n="quit.hint">如果你只是想暂时离开、并不想关掉程序，直接关掉本页也行——关掉网页后程序会在一段时间没有访问时自动退出。</p>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="quitCancelBtn" type="button" data-i18n="quit.cancel">取消</button>
+      <button class="btn btn--danger" id="quitConfirmBtn" type="button" data-i18n="quit.confirm">确定退出</button>
+    </div>
+  </div>
+</div>
+
+<!-- 错误条 -->
+<div class="errorbar" id="errorBar" role="alert" aria-live="assertive" hidden>
+  <svg class="icon icon--lg errorbar__icon"><use href="#i-alert"></use></svg>
+  <div class="errorbar__body">
+    <strong id="errorTitle" data-i18n="error.title">出错了</strong>
+    <p id="errorText"></p>
+  </div>
+  <button class="btn btn--ghost btn--sm errorbar__close" id="errorCloseBtn" type="button">
+    <svg class="icon"><use href="#i-close"></use></svg><span data-i18n="error.close">关闭</span>
+  </button>
+</div>
+
+<main class="workspace">
+
+  <!-- ===================== 输入区 ===================== -->
+  <section class="card area-input" id="inputCard">
+    <div class="card__head">
+      <h2><svg class="icon"><use href="#i-flask"></use></svg><span data-i18n="input.title">序列输入</span></h2>
+      <div class="card__actions">
+        <button class="btn btn--ghost btn--sm" id="sampleBtn" type="button">
+          <svg class="icon"><use href="#i-spark"></use></svg><span data-i18n="input.loadSample">载入示例</span>
+        </button>
+        <button class="btn btn--ghost btn--sm" id="fileBtn" type="button">
+          <svg class="icon"><use href="#i-file"></use></svg><span data-i18n="input.chooseFile">选择文件</span>
+        </button>
+        <button class="btn btn--ghost btn--sm" id="clearInputBtn" type="button">
+          <svg class="icon"><use href="#i-trash"></use></svg><span data-i18n="input.clear">清空输入</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="editor-wrap" id="dropZone">
+      <div class="editor-mirror" id="editorMirror" aria-hidden="true"></div>
+      <textarea id="seqInput" class="editor" wrap="off" spellcheck="false" autocomplete="off"
+        aria-label="序列输入框" data-i18n-aria-label="input.ariaLabel"
+        placeholder="每行一条序列（或粘贴 / 拖入 .txt/.fasta/.fa/.csv 文件）：&#10;ILPILSLIGGLL&#10;RPPGFSPFR&#10;&gt;pep_03&#10;FLPIVGKLLSGLSGLL&#10;&#10;FASTA 头以 &gt; 开头，用作序列 ID"
+        data-i18n-placeholder="input.placeholder"></textarea>
+      <div class="dropzone-hint" id="dropHint">
+        <svg class="icon icon--lg"><use href="#i-upload"></use></svg>
+        <strong data-i18n="input.dropTitle">松开鼠标以载入文件</strong>
+        <span>.txt / .fasta / .fa / .csv</span>
+      </div>
+    </div>
+    <input type="file" id="fileInput" accept=".txt,.fasta,.fa,.fna,.csv,text/plain,text/csv" hidden>
+
+    <div class="statline" aria-live="polite">
+      <span class="chip" id="statCount">共 0 条序列，最长 0</span>
+      <span class="chip chip--ok" id="statValid">合法 0</span>
+      <span class="chip chip--bad" id="statInvalid" hidden>非法 0</span>
+      <span class="chip chip--muted" id="statFormat">格式：逐行</span>
+    </div>
+
+    <div class="warnbox" id="warnBox" hidden>
+      <div class="warnbox__head">
+        <svg class="icon"><use href="#i-alert"></use></svg>
+        <strong data-i18n="warn.title">提示</strong><span class="warnbox__count" id="warnCount"></span>
+      </div>
+      <ul class="warnbox__list" id="warnList"></ul>
+    </div>
+
+    <div class="controls">
+      <label class="field" for="lengthHandling">
+        <span class="field__label" data-i18n="input.lengthLabel">长度处理</span>
+        <select id="lengthHandling" class="select">
+          <option value="auto" data-i18n="input.lengthAuto">auto · ≤20 走短肽模型</option>
+          <option value="short" data-i18n="input.lengthShort">short · 强制短肽模型</option>
+          <option value="long" data-i18n="input.lengthLong">long · 强制长肽模型</option>
+        </select>
+      </label>
+      <button class="btn btn--primary" id="scoreBtn" type="button" disabled>
+        <span class="btn__spinner" aria-hidden="true"></span>
+        <svg class="icon btn__icon"><use href="#i-play"></use></svg>
+        <span class="btn__label" data-i18n="input.start">开始打分</span>
+        <kbd>Ctrl</kbd><kbd>Enter</kbd>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===================== 概览 ===================== -->
+  <section class="card area-overview">
+    <div class="card__head">
+      <h2><svg class="icon"><use href="#i-chart"></use></svg><span data-i18n="overview.title">结果概览</span></h2>
+      <span class="card__meta" id="overviewMeta">—</span>
+    </div>
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="stat__label" data-i18n="overview.count">序列数</span>
+        <strong class="stat__value" id="sumCount">—</strong>
+        <span class="stat__hint" id="sumCountHint">&nbsp;</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label" data-i18n="overview.mean">平均分</span>
+        <strong class="stat__value" id="sumMean">—</strong>
+        <span class="stat__hint">mean</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label" data-i18n="overview.median">中位数</span>
+        <strong class="stat__value" id="sumMedian">—</strong>
+        <span class="stat__hint">median</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label" data-i18n="overview.max">最高分</span>
+        <strong class="stat__value stat__value--hi" id="sumMax">—</strong>
+        <span class="stat__hint">max</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label" data-i18n="overview.min">最低分</span>
+        <strong class="stat__value stat__value--lo" id="sumMin">—</strong>
+        <span class="stat__hint">min</span>
+      </div>
+      <div class="stat stat--accent">
+        <span class="stat__label" id="sumAboveLabel">≥ 0.50 条数</span>
+        <strong class="stat__value" id="sumAbove">—</strong>
+        <span class="stat__hint">n_above_threshold</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 直方图 ===================== -->
+  <section class="card area-histogram">
+    <div class="card__head">
+      <h2><svg class="icon"><use href="#i-chart"></use></svg><span data-i18n="hist.title">分数分布</span></h2>
+      <span class="card__meta" id="histMeta">10 个等宽区间</span>
+    </div>
+    <div class="hist" id="histogram"></div>
+    <div class="placeholder placeholder--slim" id="histEmpty" data-i18n="hist.empty">暂无分布数据</div>
+  </section>
+
+  <!-- ===================== 结果表格 ===================== -->
+  <section class="card area-results">
+    <div class="card__head card__head--wrap">
+      <h2><svg class="icon"><use href="#i-chart"></use></svg><span data-i18n="results.title">排序结果</span></h2>
+      <div class="card__actions">
+        <div class="segmented" id="filterGroup" role="group"
+             aria-label="按阈值筛选" data-i18n-aria-label="results.filterAria">
+          <button class="seg is-active" type="button" data-filter="all" data-i18n="results.filterAll">全部</button>
+          <button class="seg" type="button" data-filter="above" id="segAbove">≥ 0.50</button>
+          <button class="seg" type="button" data-filter="below" id="segBelow">&lt; 0.50</button>
+        </div>
+        <button class="btn btn--ghost btn--sm" id="copyBtn" type="button" disabled>
+          <svg class="icon"><use href="#i-copy"></use></svg><span data-i18n="results.copy">复制 TSV</span>
+        </button>
+        <button class="btn btn--ghost btn--sm" id="exportBtn" type="button" disabled>
+          <svg class="icon"><use href="#i-download"></use></svg><span data-i18n="results.export">导出 CSV</span>
+        </button>
+        <button class="btn btn--ghost btn--sm" id="clearBtn" type="button">
+          <svg class="icon"><use href="#i-trash"></use></svg><span data-i18n="results.clear">清空</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="result-meta" id="resultMeta">尚未打分</div>
+
+    <div class="table-wrap" id="tableWrap" hidden>
+      <table class="table" id="resultTable">
+        <thead>
+          <tr>
+            <th class="th--rank" data-sort="rank" scope="col" aria-sort="descending"><span data-i18n="table.rank">排名</span><i class="arrow"></i></th>
+            <th data-sort="id" scope="col"><span data-i18n="table.id">ID</span><i class="arrow"></i></th>
+            <th data-sort="sequence" scope="col"><span data-i18n="table.sequence">序列</span><i class="arrow"></i></th>
+            <th class="th--num" data-sort="length" scope="col"><span data-i18n="table.length">长度</span><i class="arrow"></i></th>
+            <th class="th--num" data-sort="score" scope="col"><span data-i18n="table.score">分数</span><i class="arrow"></i></th>
+            <th data-sort="model" scope="col"><span data-i18n="table.model">模型</span><i class="arrow"></i></th>
+          </tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+    </div>
+
+    <div class="placeholder" id="resultsEmpty">
+      <svg class="icon icon--xl"><use href="#i-spark"></use></svg>
+      <strong>还没有结果</strong>
+      <span>载入示例或粘贴序列，然后点击「开始打分」（快捷键 Ctrl + Enter）。</span>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span><span data-i18n="footer.contract">接口契约：</span><code>GET /api/status</code> · <code>POST /api/score</code> · <code>POST /api/export</code></span>
+  <span id="footerApi">服务地址：—</span>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

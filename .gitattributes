@@ -1,0 +1,28 @@
+# PeptideRanker 仓库的 Git 属性
+#
+# 这个仓库里有几类文件一旦被 Git 改写换行或编码就会坏掉，所以显式声明为二进制。
+
+# 双击启动脚本必须是 GBK 编码 + CRLF 换行，cmd 才能正确解析其中的中文与命令。
+# 见 README「交付给别人怎么用」一节；改成 LF 或 UTF-8 会直接导致启动失败。
+*.bat -text
+
+# 原始 Linux 二进制与神经网络权重：按字节原样保存，禁止任何换行/编码转换。
+PeptideRanker -text
+*.model -text
+
+# 在 Linux 下执行的脚本必须固定 LF：本机 core.autocrlf=true，
+# 不固定的话 Windows 上签出会变成 CRLF，shebang 与 bash 解析都会失败。
+*.sh text eol=lf
+*.pl text eol=lf
+Dockerfile* text eol=lf
+
+# 图片等本就二进制的资源
+*.png binary
+*.jpg binary
+*.ico binary
+*.pdf binary
+*.zip binary
+
+# 反汇编文本体量较大，但需要保留（是逆向结论的证据）
+_re/dis_all.txt -text
+_re/dis_layer.txt -text
